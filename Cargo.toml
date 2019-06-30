@@ -1,0 +1,7 @@
+[package]
+name = "mylists"
+version = "0.1.0"
+authors = ["Mashariq Khan <Mashariq.Khan@eastbay.com>"]
+edition = "2018"
+
+[dependencies]
