@@ -6,7 +6,7 @@ fn main(){
     myfl.push(23);
     myfl.push(37);
     myfl.push(71);
-    println!("{:?}",myfl);
+    println!("{:?} and length is {}",myfl,myfl.len());
     println!("{:?}",myfl.pop());
     println!("{:?}",myfl);
 }
