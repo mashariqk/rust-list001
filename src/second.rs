@@ -1,5 +1,3 @@
-use std::mem;
-
 #[derive(Debug)]
 pub struct List {
     head: Link,
@@ -29,34 +27,31 @@ impl List {
     pub fn push(&mut self, value: i32) {
         let n = Node {
             value,
-            next: mem::replace(&mut self.head, None),
+            next: self.head.take(),
         };
         self.head = Some(Box::new(n));
         self.count += 1
     }
 
     pub fn pop(&mut self) -> Option<i32> {
-        match mem::replace(&mut self.head, None) {
-            None => None,
-            Some(mut s) => {
-                self.head = mem::replace(&mut s.next, None);
-                if self.count > 0 {
-                    self.count -= 1;
-                }
-                Some(s.value)
+        self.head.take().map(|node| {
+            self.head = node.next;
+            if self.count > 0 {
+                self.count -= 1;
             }
-        }
+            node.value
+        })
     }
 }
 
-impl Drop for List{
+impl Drop for List {
     fn drop(&mut self) {
         if self.len() > 0 {
-            println!("About to destroy {:?}",self);
-            let mut c_n = mem::replace(&mut self.head, None);
+            println!("About to destroy {:?}", self);
+            let mut c_n = self.head.take();
             while let Some(mut bx) = c_n {
-                c_n = mem::replace(&mut bx.next,None);
-                println!("About to destroy {:?}",c_n);
+                c_n = bx.next.take();
+                println!("About to destroy {:?}", c_n);
             }
         }
     }
@@ -73,8 +68,7 @@ mod test {
     }
 
     #[test]
-    fn test_for_push_pop_and_length(){
-
+    fn test_for_push_pop_and_length() {
         let mut mylist2 = List::new();
 
         assert_eq!(mylist2.len(), 0);
@@ -86,16 +80,16 @@ mod test {
 
         assert_eq!(mylist2.len(), 4);
 
-        assert_eq!(mylist2.pop(),Some(43));
+        assert_eq!(mylist2.pop(), Some(43));
 
-        assert_eq!(mylist2.pop(),Some(7));
+        assert_eq!(mylist2.pop(), Some(7));
 
         assert_eq!(mylist2.len(), 2);
 
         mylist2.pop();
         mylist2.pop();
 
-        assert_eq!(mylist2.pop(),None);
+        assert_eq!(mylist2.pop(), None);
 
         assert_eq!(mylist2.len(), 0);
     }
