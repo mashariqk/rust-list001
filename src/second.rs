@@ -1,6 +1,4 @@
 use std::mem;
-use crate::first::Link::More;
-use core::borrow::BorrowMut;
 
 #[derive(Debug)]
 pub struct List {
@@ -8,11 +6,7 @@ pub struct List {
     count: u32,
 }
 
-#[derive(Debug)]
-pub enum Link {
-    Empty,
-    More(Box<Node>),
-}
+type Link = Option<Box<Node>>;
 
 #[derive(Debug)]
 pub struct Node {
@@ -23,7 +17,7 @@ pub struct Node {
 impl List {
     pub fn new() -> Self {
         List {
-            head: Link::Empty,
+            head: None,
             count: 0,
         }
     }
@@ -35,17 +29,17 @@ impl List {
     pub fn push(&mut self, value: i32) {
         let n = Node {
             value,
-            next: mem::replace(&mut self.head, Link::Empty),
+            next: mem::replace(&mut self.head, None),
         };
-        self.head = Link::More(Box::new(n));
+        self.head = Some(Box::new(n));
         self.count += 1
     }
 
     pub fn pop(&mut self) -> Option<i32> {
-        match mem::replace(&mut self.head, Link::Empty) {
-            Link::Empty => None,
-            Link::More(mut s) => {
-                self.head = mem::replace(&mut s.next, Link::Empty);
+        match mem::replace(&mut self.head, None) {
+            None => None,
+            Some(mut s) => {
+                self.head = mem::replace(&mut s.next, None);
                 if self.count > 0 {
                     self.count -= 1;
                 }
@@ -59,9 +53,9 @@ impl Drop for List{
     fn drop(&mut self) {
         if self.len() > 0 {
             println!("About to destroy {:?}",self);
-            let mut c_n = mem::replace(&mut self.head, Link::Empty);
-            while let Link::More(mut bx) = c_n {
-                c_n = mem::replace(&mut bx.next,Link::Empty);
+            let mut c_n = mem::replace(&mut self.head, None);
+            while let Some(mut bx) = c_n {
+                c_n = mem::replace(&mut bx.next,None);
                 println!("About to destroy {:?}",c_n);
             }
         }
