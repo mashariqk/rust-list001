@@ -1,18 +1,18 @@
 #[derive(Debug)]
-pub struct List {
-    head: Link,
+pub struct List<T> {
+    head: Link<T>,
     count: u32,
 }
 
-type Link = Option<Box<Node>>;
+type Link<T> = Option<Box<Node<T>>>;
 
 #[derive(Debug)]
-pub struct Node {
-    value: i32,
-    next: Link,
+pub struct Node<T> {
+    value: T,
+    next: Link<T>,
 }
 
-impl List {
+impl<T> List<T> {
     pub fn new() -> Self {
         List {
             head: None,
@@ -24,7 +24,7 @@ impl List {
         self.count
     }
 
-    pub fn push(&mut self, value: i32) {
+    pub fn push(&mut self, value: T) {
         let n = Node {
             value,
             next: self.head.take(),
@@ -33,7 +33,7 @@ impl List {
         self.count += 1
     }
 
-    pub fn pop(&mut self) -> Option<i32> {
+    pub fn pop(&mut self) -> Option<T> {
         self.head.take().map(|node| {
             self.head = node.next;
             if self.count > 0 {
@@ -44,14 +44,12 @@ impl List {
     }
 }
 
-impl Drop for List {
+impl<T> Drop for List<T> {
     fn drop(&mut self) {
         if self.len() > 0 {
-            println!("About to destroy {:?}", self);
             let mut c_n = self.head.take();
             while let Some(mut bx) = c_n {
                 c_n = bx.next.take();
-                println!("About to destroy {:?}", c_n);
             }
         }
     }
@@ -63,7 +61,7 @@ mod test {
 
     #[test]
     fn test_for_new_list_count() {
-        let mylist1 = List::new();
+        let mylist1:List<i32> = List::new();
         assert_eq!(mylist1.len(), 0);
     }
 
