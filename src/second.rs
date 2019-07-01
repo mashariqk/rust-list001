@@ -42,6 +42,14 @@ impl<T> List<T> {
             node.value
         })
     }
+
+    pub fn peek(&self) -> Option<&T> {
+        self.head.as_ref().map(|node| &node.value)
+    }
+
+    pub fn peek_mut(&mut self) -> Option<&mut T>{
+        self.head.as_mut().map(|node| &mut node.value)
+    }
 }
 
 impl<T> Drop for List<T> {
@@ -61,7 +69,7 @@ mod test {
 
     #[test]
     fn test_for_new_list_count() {
-        let mylist1:List<i32> = List::new();
+        let mylist1: List<i32> = List::new();
         assert_eq!(mylist1.len(), 0);
     }
 
@@ -90,5 +98,24 @@ mod test {
         assert_eq!(mylist2.pop(), None);
 
         assert_eq!(mylist2.len(), 0);
+    }
+
+    #[test]
+    fn peek(){
+        let mut mylist3:List<i32> = List::new();
+        mylist3.push(3); mylist3.push(9); mylist3.push(138); mylist3.push(6);
+        assert_eq!(mylist3.peek(),Some(&6));
+    }
+
+    #[test]
+    fn peek_mut(){
+        let mut mylist4:List<i32> = List::new();
+        mylist4.push(3); mylist4.push(9); mylist4.push(138); mylist4.push(6);
+        assert_eq!(mylist4.peek(),Some(&6));
+        mylist4.peek_mut().map(|vale|{
+            *vale = 97
+        });
+        assert_eq!(mylist4.peek(),Some(&97));
+        assert_eq!(mylist4.pop(),Some(97));
     }
 }
