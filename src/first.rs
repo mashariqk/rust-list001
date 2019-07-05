@@ -1,6 +1,4 @@
 use std::mem;
-use crate::first::Link::More;
-use core::borrow::BorrowMut;
 
 #[derive(Debug)]
 pub struct List {
