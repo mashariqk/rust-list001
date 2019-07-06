@@ -53,14 +53,14 @@ impl List {
     }
 }
 
-impl Drop for List{
+impl Drop for List {
     fn drop(&mut self) {
         if self.len() > 0 {
-            println!("About to destroy {:?}",self);
+            println!("About to destroy {:?}", self);
             let mut c_n = mem::replace(&mut self.head, Link::Empty);
             while let Link::More(mut bx) = c_n {
-                c_n = mem::replace(&mut bx.next,Link::Empty);
-                println!("About to destroy {:?}",c_n);
+                c_n = mem::replace(&mut bx.next, Link::Empty);
+                println!("About to destroy {:?}", c_n);
             }
         }
     }
@@ -77,8 +77,7 @@ mod test {
     }
 
     #[test]
-    fn test_for_push_pop_and_length(){
-
+    fn test_for_push_pop_and_length() {
         let mut mylist2 = List::new();
 
         assert_eq!(mylist2.len(), 0);
@@ -90,16 +89,16 @@ mod test {
 
         assert_eq!(mylist2.len(), 4);
 
-        assert_eq!(mylist2.pop(),Some(43));
+        assert_eq!(mylist2.pop(), Some(43));
 
-        assert_eq!(mylist2.pop(),Some(7));
+        assert_eq!(mylist2.pop(), Some(7));
 
         assert_eq!(mylist2.len(), 2);
 
         mylist2.pop();
         mylist2.pop();
 
-        assert_eq!(mylist2.pop(),None);
+        assert_eq!(mylist2.pop(), None);
 
         assert_eq!(mylist2.len(), 0);
     }

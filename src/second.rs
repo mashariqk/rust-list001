@@ -15,11 +15,11 @@ pub struct Node<T> {
 pub struct IntoIter<T>(List<T>);
 
 pub struct Iter<'a, T> {
-    next: Option<&'a Node<T>>
+    next: Option<&'a Node<T>>,
 }
 
 pub struct IterMut<'a, T> {
-    next: Option<&'a mut Node<T>>
+    next: Option<&'a mut Node<T>>,
 }
 
 impl<T> Iterator for IntoIter<T> {
@@ -97,17 +97,13 @@ impl<T> List<T> {
 
     pub fn iter<'a>(&'a self) -> Iter<'a, T> {
         Iter {
-            next: self.head.as_ref().map(|node| {
-                &**node
-            })
+            next: self.head.as_ref().map(|node| &**node),
         }
     }
 
     pub fn iter_mut<'a>(&'a mut self) -> IterMut<'a, T> {
         IterMut {
-            next: self.head.as_mut().map(|node| {
-                &mut **node
-            })
+            next: self.head.as_mut().map(|node| &mut **node),
         }
     }
 }
@@ -178,9 +174,7 @@ mod test {
         mylist4.push(138);
         mylist4.push(6);
         assert_eq!(mylist4.peek(), Some(&6));
-        mylist4.peek_mut().map(|vale| {
-            *vale = 97
-        });
+        mylist4.peek_mut().map(|vale| *vale = 97);
         assert_eq!(mylist4.peek(), Some(&97));
         assert_eq!(mylist4.pop(), Some(97));
     }
@@ -193,7 +187,7 @@ mod test {
         list.push(3);
 
         let mut iter = list.into_iter();
-//        println!("List is now {:?}",list); // Wont compile since it has moved
+        //        println!("List is now {:?}",list); // Wont compile since it has moved
         assert_eq!(iter.next(), Some(3));
         assert_eq!(iter.next(), Some(2));
         assert_eq!(iter.next(), Some(1));

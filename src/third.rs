@@ -16,15 +16,12 @@ pub struct Node<T> {
 
 impl<T> Node<T> {
     fn new(value: T) -> Node<T> {
-        Node {
-            value,
-            next: None,
-        }
+        Node { value, next: None }
     }
 }
 
 pub struct Iter<'a, T> {
-    next: Option<&'a Node<T>>
+    next: Option<&'a Node<T>>,
 }
 
 impl<'a, T> Iterator for Iter<'a, T> {
@@ -87,9 +84,9 @@ impl<T> List<T> {
     pub fn iter(&self) -> Iter<T> {
         Iter {
             next: self.head.as_ref().map(|node| {
-               let x =  &**node;
+                let x = &**node;
                 x
-            })
+            }),
         }
     }
 }
@@ -100,7 +97,9 @@ impl<T> Drop for List<T> {
         while let Some(node) = head {
             if let Ok(mut node) = Rc::try_unwrap(node) {
                 head = node.next.take();
-            } else { break; }
+            } else {
+                break;
+            }
         }
     }
 }
@@ -115,24 +114,24 @@ mod test {
         assert_eq!(list.head(), None);
         assert_eq!(list.len(), 0);
 
-        let  list = list.append(1).append(2).append(3);
+        let list = list.append(1).append(2).append(3);
         assert_eq!(list.head(), Some(&3));
         assert_eq!(list.len(), 3);
 
-        let  list = list.tail();
+        let list = list.tail();
         assert_eq!(list.head(), Some(&2));
         assert_eq!(list.len(), 2);
 
-        let  list = list.tail();
+        let list = list.tail();
         assert_eq!(list.head(), Some(&1));
         assert_eq!(list.len(), 1);
 
-        let  list = list.tail();
+        let list = list.tail();
         assert_eq!(list.head(), None);
         assert_eq!(list.len(), 0);
 
         // Make sure empty tail works
-        let  list = list.tail();
+        let list = list.tail();
         assert_eq!(list.head(), None);
         assert_eq!(list.len(), 0);
     }
