@@ -1,5 +1,5 @@
 use core::mem;
-use std::cell::RefCell;
+use std::cell::{RefCell, Ref};
 use std::convert::TryInto;
 use std::rc::Rc;
 
@@ -79,6 +79,14 @@ impl<'a, T> List<T> {
             x
         })
     }
+
+    pub fn peek_front(&self) -> Option<Ref<T>>{
+        self.head.as_ref().map(|head|{
+            let c = head.borrow();
+            let x = Ref::map(c,|node| &node.value);
+            x
+        })
+    }
 }
 
 #[cfg(test)]
@@ -121,6 +129,15 @@ mod test {
         assert_eq!(list.len(),0);
         assert_eq!(list.pop_front(), None);
         assert_eq!(list.len(),0);
+    }
+
+    #[test]
+    fn peek() {
+        let mut list = List::new();
+        assert!(list.peek_front().is_none());
+        list.push_front(1); list.push_front(2); list.push_front(3);
+
+        assert_eq!(&*list.peek_front().unwrap(), &3);
     }
 }
 
